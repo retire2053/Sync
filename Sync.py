@@ -249,6 +249,10 @@ class Sync:
             for x in self.__search_results:
                 print("\t", count, x)
                 count+=1
+            if len(self.__search_results)==1:
+                os.system("open \"%s%s\"" % (self.__source, self.__search_results[0]))
+                print("\t只检索到一个文件，已经为您打开")
+            else: print("\t请使用open命令来打开某个文件")
 
     def find_duplicate(self):
         if self.__is_analyzed():
