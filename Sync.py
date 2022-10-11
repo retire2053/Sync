@@ -12,7 +12,7 @@ class Variables:
             'source': '输入的目录位置，使用setsource命令修改',
             'output': '输出的目录位置，使用setoutput命令修改',
         }
-        if persistfile is None:self.__var_persistence_file = os.environ['HOME'] + "/sync.save"
+        if persistfile is None:self.__var_persistence_file = os.environ['HOME'] + "/.sync.save"
         else : self.__var_persistence_file = persistfile
 
         if os.path.exists(self.__var_persistence_file):
@@ -252,7 +252,10 @@ class Sync:
             if len(self.__search_results)==1:
                 os.system("open \"%s%s\"" % (self.__source, self.__search_results[0]))
                 print("\t只检索到一个文件，已经为您打开")
-            else: print("\t请使用open命令来打开某个文件")
+            elif len(self.__search_results)==0:
+                print("\t没有找到结果，请重新检索")
+            else:
+                print("\t请使用open命令来打开某个文件")
 
     def find_duplicate(self):
         if self.__is_analyzed():
@@ -344,7 +347,7 @@ class Console:
     def version(self):
         print("=".join([''] * 40))
         print("同步、文件管理程序")
-        print("最后更新日期：2022.09.30 16:00:00 by Jacob")
+        print("最后更新日期：2022.10.11 16:00:00 by Jacob")
         print("-".join(['']*40))
 
     def work(self):
@@ -399,7 +402,6 @@ class Console:
         for item in self.__commands: print("\t[%s] - %s" % (item, self.__command_desc[item]))
 
 if __name__ == "__main__":
-    print(sys.argv)
     if len(sys.argv)==4:
         source = sys.argv[1]
         output = sys.argv[2]
@@ -408,6 +410,8 @@ if __name__ == "__main__":
         source = None
         output = None
         persistfile = None
+    print("程序初始化，source=%s，output=%s，persistfile=%s"%(source, output, persistfile))
+
     sync = Sync()
     variables = Variables(source, output, persistfile)
     console = Console(variables, sync)
