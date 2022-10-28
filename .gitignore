@@ -4,3 +4,5 @@
 .idea/modules.xml
 .idea/Sync.iml
 .idea/vcs.xml
+*.pyc
+.vscode/settings.json

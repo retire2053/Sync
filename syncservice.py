@@ -2,6 +2,7 @@ import shutil
 from clock import *
 from plibraryservice import PLibraryService
 import os
+from util import Util
 
 class SyncService(PLibraryService):
 
@@ -88,10 +89,11 @@ class SyncService(PLibraryService):
 
         for i in range(len(first_level_dirs)):
             item = first_level_dirs[i]
-            average = int(first_level_file_dict[item][1] / (1024 * 1024 * first_level_file_dict[item][0]))
-            inspect_results.append([str(i+1), item, "contains %d files" % first_level_file_dict[item][0],
-                                 "with %s Bytes" % format(first_level_file_dict[item][1], ","),
-                                 "average %s MB" % format(average, ",")])
+            if first_level_file_dict[item][0]==0: 
+                inspect_results.append([str(i+1), item, "contains 0 files", "with 0 Bytes", "average 0 MB"])
+            else:
+                average = int(first_level_file_dict[item][1] / (1024 * 1024 * first_level_file_dict[item][0]))
+                inspect_results.append([str(i+1), item, "contains %d files" % first_level_file_dict[item][0],"with %s Bytes" % format(first_level_file_dict[item][1], ","), "average %s MB" % format(average, ",")])
         self.__format_display(inspect_results)
         print()
         print("[文件类型分布 (top 10)")
@@ -249,3 +251,20 @@ class SyncService(PLibraryService):
                     print(item[i]+''.join([" "]*how_many_space)+"  ", end='')
                 print("", end='\n')
         else: print("没有可显示的内容")
+
+    def service_autorunchain(self):
+        self.list_configs()
+        text = input("请输入多个config，用空格隔开").strip()
+        if text!="":
+            parts = text.split(" ")
+            for item in parts:
+                if len(item)>0:
+                    Util.line()
+                    print("尝试运行\"%s\"配置"%item)
+                    if self.use_config(item):
+                        self.service_analyze()
+                        self.service_sync()
+                        self.service_clean
+
+
+

@@ -72,11 +72,24 @@ class Util():
                 choice = int(text)
                 if not show_sub_file:
                     if choice == 1: return parent
-                    elif choice == 2: return Util.__dir_recursive_finder("/".join(parent.split("/")[0:-1]), show_sub_file)
-                    else:  return Util.__dir_recursive_finder(parent + "/" + real_dirs[choice - 2 - 1], show_sub_file)
+                    elif choice == 2: 
+                        parts = parent.split("/")
+                        if len(parts)<=2 : #比如parent是/Users这样的一级目录，或者/根目录
+                            return Util.__dir_recursive_finder("/", show_sub_file)
+                        else: return Util.__dir_recursive_finder("/".join(parent.split("/")[0:-1]), show_sub_file)
+                    else:  
+                        if parent=="/": return Util.__dir_recursive_finder("/" + real_dirs[choice - 2 - 1], show_sub_file)
+                        else: return Util.__dir_recursive_finder(parent + "/" + real_dirs[choice - 2 - 1], show_sub_file)
                 else:
                     if choice == 1: text = "0"  # 意思是需要重新选择
-                    elif choice == 2:return Util.__dir_recursive_finder("/".join(parent.split("/")[0:-1]), show_sub_file)
-                    elif 3 <= choice <= 2 + len(real_dirs): return Util.__dir_recursive_finder(parent + "/" + real_dirs[choice - 2 - 1], show_sub_file)
-                    else: return parent + "/" + real_files[choice - 1 - 2 - len(real_dirs)]
+                    elif choice == 2:
+                        parts = parent.split("/")
+                        if len(parts)<=2: return Util.__dir_recursive_finder("/", show_sub_file)
+                        else: return Util.__dir_recursive_finder("/".join(parent.split("/")[0:-1]), show_sub_file)
+                    elif 3 <= choice <= 2 + len(real_dirs): 
+                        if parent=="/": return Util.__dir_recursive_finder("/" + real_dirs[choice - 2 - 1], show_sub_file)
+                        else: return Util.__dir_recursive_finder(parent + "/" + real_dirs[choice - 2 - 1], show_sub_file)
+                    else: 
+                        if parent=="/" : return "/" + real_files[choice - 1 - 2 - len(real_dirs)] 
+                        else: return parent + "/" + real_files[choice - 1 - 2 - len(real_dirs)]
 

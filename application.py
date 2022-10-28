@@ -77,9 +77,11 @@ if __name__ == "__main__":
                 'open':'打开find的结果中的指定文件',
                 'duplicate':'在source中查找重复文件',
                 'big':'显示top100大文件',
+                'autorunchain':'根据设置的configchain来自动化执行',
             }
         }
     }
+
     context =  dict()
     context["command_group"] = command_group
     context["app_info"] = app_info

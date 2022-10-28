@@ -75,3 +75,9 @@ class Variables:
             for item in self.__vars:
                 if item in values:
                     self.__var_dict[item] = values[item]
+            return True
+        else: 
+            print("配置\"%s\"没有找到"%name)
+            return False
+
+        

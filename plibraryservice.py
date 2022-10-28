@@ -25,7 +25,7 @@ class PLibraryService():
     def list_vars(self):return self.__variables.list_vars()
     def save_config(self, name): self.__variables.save_config(name)
     def list_configs(self):  self.__variables.list_configs()
-    def use_config(self, name):self.__variables.use_config(name)
+    def use_config(self, name):return self.__variables.use_config(name)
     def remove_config(self, name): self.__variables.remove_config(name)
     def get_command_group(self):return self.__command_group
     def get_app_name(self):return self.__app_info['name']
@@ -60,19 +60,19 @@ class EnvironmentService(PLibraryService):
 
     def service_removeconfig(self):
         self.list_configs()
-        text = input("请输入要使用的配置的名称").strip()
+        text = input("请输入要使用的配置的名称:").strip()
         if len(text)>0:
             self.remove_config(text)
     
     def service_saveconfig(self):
         self.list_configs()
-        text = input("请输入要使用的配置的名称").strip()
+        text = input("请输入要使用的配置的名称:").strip()
         if len(text)>0:
             self.save_config(text)
     
     def service_useconfig(self):
         self.list_configs()
-        text = input("请输入要使用的配置的名称").strip()
+        text = input("请输入要使用的配置的名称:").strip()
         if len(text)>0:
             self.use_config(text)
     
