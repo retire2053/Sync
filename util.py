@@ -30,6 +30,23 @@ class Util():
     def short_line(): print(''.join(['='] * 40))
 
     @staticmethod
+    def format_display(lst, indent=8):
+        if len(lst)>0:
+            maxlen = [0]*len(lst[0])
+            for item in lst:
+                for i in range(len(item)):
+                    if len(str(item[i]))>maxlen[i]:maxlen[i] = len(str(item[i]))
+            for item in lst:
+                if indent>0: print(''.join([" "]*indent), end='')
+                for i in range(len(item)):
+                    how_many_space = maxlen[i]-len(str(item[i]))
+                    print(str(item[i])+''.join([" "]*how_many_space)+"  ", end='')
+                print("", end='\n')
+        else: 
+            if indent>0: print(''.join([" "]*indent), end='')
+            print("没有可显示的内容")
+
+    @staticmethod
     def input(var_type, var_desc):
         try:
             if var_type == 'directory' :

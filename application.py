@@ -2,7 +2,9 @@ import traceback
 from variables import Variables
 from util import Util
 from syncservice import *
-from plibraryservice import *
+from baseservice import *
+from environmentservice import *
+from bookservice import *
 
 class CommandHub:
     def __init__(self, context):
@@ -63,8 +65,8 @@ if __name__ == "__main__":
                     'help': '打印所有命令的信息',
                     'version': '了解程序的版本',
                     'exit':'退出应用程序',
-                }
-            },
+            }
+        },
         "同步命令": {
             'class':'SyncService',
             'command':{
@@ -79,7 +81,13 @@ if __name__ == "__main__":
                 'big':'显示top100大文件',
                 'autorunchain':'根据设置的configchain来自动化执行',
             }
-        }
+        },
+        "图书馆命令":{
+            'class': "BookService",
+            'command':{
+                'category': '分析图书馆中所有类别',
+            }
+        },
     }
 
     context =  dict()

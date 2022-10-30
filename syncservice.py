@@ -1,10 +1,10 @@
 import shutil
 from clock import *
-from plibraryservice import PLibraryService
+from baseservice import *
 import os
 from util import Util
 
-class SyncService(PLibraryService):
+class SyncService(BaseService):
 
     def __init__(self, context): 
         super().__init__(context)
@@ -94,14 +94,14 @@ class SyncService(PLibraryService):
             else:
                 average = int(first_level_file_dict[item][1] / (1024 * 1024 * first_level_file_dict[item][0]))
                 inspect_results.append([str(i+1), item, "contains %d files" % first_level_file_dict[item][0],"with %s Bytes" % format(first_level_file_dict[item][1], ","), "average %s MB" % format(average, ",")])
-        self.__format_display(inspect_results)
+        Util.format_display(inspect_results)
         print()
         print("[文件类型分布 (top 10)")
         sorted_list = sorted(file_type_count_dict.items(), key=lambda item: item[1], reverse=True)[0:10]
         display_list = []
         for item in sorted_list:
             display_list.append([item[0], "contains %d files" % item[1]])
-        self.__format_display(display_list)
+        Util.format_display(display_list)
         print()
 
     def service_sync(self):
@@ -147,7 +147,7 @@ class SyncService(PLibraryService):
             display_list = []
             for item in sorted_list:
                 display_list.append(["占用磁盘%s"%(format(item[1]/1024*1024, ",")), self.get_var('source')+item[0]])
-            self.__format_display(display_list)
+            Util.format_display(display_list)
 
 
     def service_showclean(self):
@@ -160,7 +160,7 @@ class SyncService(PLibraryService):
             display_list = []
             for item in sorted_list:
                 display_list.append(["占用磁盘%s"%(format(item[1]/1024*1024, ",")), self.get_var('output')+item[0]])
-            self.__format_display((display_list))
+            Util.format_display((display_list))
 
     def service_search(self):
         if not self.are_vars_exist(['source', 'output']):return
@@ -232,25 +232,12 @@ class SyncService(PLibraryService):
             display_list = []
             for i in range(len(lst)):
                 display_list.append(["[%d]"%(i+1),  "\t占用磁盘%sMB"%format(int(lst[i][1]/(1024*1024)), ',') , "[%s]"%lst[i][0]])
-            self.__format_display(display_list)
+            Util.format_display(display_list)
 
     def __is_analyzed(self):
         if self.get_param('source_file_info_dict') is None:
             return self.__prepare_analyze_action()
         else: return True
-
-    def __format_display(self, lst):
-        if len(lst)>0:
-            maxlen = [0]*len(lst[0])
-            for item in lst:
-                for i in range(len(item)):
-                    if len(item[i])>maxlen[i]:maxlen[i] = len(item[i])
-            for item in lst:
-                for i in range(len(item)):
-                    how_many_space = maxlen[i]-len(item[i])
-                    print(item[i]+''.join([" "]*how_many_space)+"  ", end='')
-                print("", end='\n')
-        else: print("没有可显示的内容")
 
     def service_autorunchain(self):
         self.list_configs()
