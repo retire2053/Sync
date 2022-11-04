@@ -77,7 +77,8 @@ if __name__ == "__main__":
                 'clean': '清理output中的所有非备份文件',
                 'search':'在source中搜索某个文件名',
                 'open':'打开find的结果中的指定文件',
-                'duplicate':'在source中查找重复文件',
+                'duplicate':'在source中查找sha256相同的重复文件',
+                'namespec':'校验文件的命名规范，进行自动化修改',
                 'big':'显示top100大文件',
                 'autorunchain':'根据设置的configchain来自动化执行',
             }
@@ -86,6 +87,7 @@ if __name__ == "__main__":
             'class': "BookService",
             'command':{
                 'category': '分析图书馆中所有类别',
+                'exportlist':'导出图书馆中的图书列表',
             }
         },
     }

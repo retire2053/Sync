@@ -1,5 +1,6 @@
 import datetime
 import os
+import hashlib
 
 class Util():
 
@@ -18,10 +19,10 @@ class Util():
     def time_to_string_compact(time): return time.strftime('%Y%m%d%H%M%S')
 
     @staticmethod
-    def iso8859_to_utf(self, text): return text.encode("ISO-8859-1").decode("GBK").encode("UTF-8").decode("UTF-8")
+    def iso8859_to_utf( text): return text.encode("ISO-8859-1").decode("GBK").encode("UTF-8").decode("UTF-8")
 
     @staticmethod
-    def clean(self,text): return ''.join(re.findall('[\u4e00-\u9fa5a-zA-Z0-9]', text))
+    def clean(text): return ''.join(re.findall('[\u4e00-\u9fa5a-zA-Z0-9]', text))
 
     @staticmethod
     def line(): print(''.join(['-'] * 80))
@@ -110,3 +111,9 @@ class Util():
                         if parent=="/" : return "/" + real_files[choice - 1 - 2 - len(real_dirs)] 
                         else: return parent + "/" + real_files[choice - 1 - 2 - len(real_dirs)]
 
+    @staticmethod
+    def get_sha256(file_path):
+       
+        with open(file_path, 'rb') as fp:
+            data = fp.read()
+        return hashlib.sha256(data).hexdigest()

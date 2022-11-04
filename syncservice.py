@@ -190,28 +190,71 @@ class SyncService(BaseService):
             self.set_param('search_results', search_results)
 
     def service_duplicate(self):
-        if not self.are_vars_exist(['source', 'output']):return
-        if self.__is_analyzed():
-            dup_dict = dict()
-            for x in self.get_param('source_file_info_dict'):
-                key = (x.split("/")[-1], self.get_param('source_file_info_dict')[x])
-                if key not in dup_dict: dup_dict[key] = [x]
-                else: dup_dict[key].append(x)
-            count = 0
-            to_delete = []
-            for x in dup_dict:
-                if len(dup_dict[x])>1:
-                    count += 1
-                    for item in dup_dict[x]:print("\t[group%d]"%count, item)
-                    to_delete.extend(dup_dict[x][1:])
-                    print()
-            if count == 0 : print("没有找到任何重复的文件")
+        if not self.are_vars_exist(['source']):return
+        self.__prepare_analyze_action()
+        sha256_dict = dict()
+        count = 1
+        for related_path in self.get_param('source_file_info_dict'):
+            full_path = self.get_var('source')+related_path
+            sha256 = Util.get_sha256(full_path)
+            if sha256 not in sha256_dict: sha256_dict[sha256] = [related_path]
             else:
-                text = input("你想删除这些%d个重复项吗？输入yes进行删除:"%len(to_delete)).strip()
-                if text == 'yes':
-                    for i in range(len(to_delete)):
-                        print("delete no.%d"%(i+1), self.get_var('source') + "/" + to_delete[i])
-                        os.remove(self.get_var('source')+"/"+ to_delete[i])
+                sha256_dict[sha256].append(related_path)
+            print("\t分析no.%d\"%s\",sha256=%s"%(count, related_path, sha256))
+            count+=1
+        duplicate_list = [sha256_dict[key] for key in sha256_dict if len(sha256_dict[key])>1]
+        if len(duplicate_list)>0:
+            print("重复的文件如下：共有%d组"%len(duplicate_list))
+            for duplicate_item in duplicate_list:
+                print("\t重复组：", " ".join(duplicate_item))
+            text = input("你想删除这%d组中的重复项吗(输入yes确认)?"%len(duplicate_list)).strip()
+            if text == 'yes':
+                for duplicate_item in duplicate_list:
+                    for related_file_name in duplicate_item[1:]:
+                        full_path_to_delete = self.get_var('source')+related_file_name
+                        prompt = input("\t确定删除%s(输入yes确认)?"%full_path_to_delete)
+                        if prompt == "yes":
+                            os.remove(full_path_to_delete)
+                self.__prepare_analyze_action()
+        else:
+            print("太好了，没有发现sha256相同的文件")
+
+    def service_namespec(self):
+        if not self.are_vars_exist(['source']):return
+        self.__prepare_analyze_action()
+        impossible_set = set(['(', ')', '（', '）', '-', ' ', ":", "：", "——", "__", "，", ","])
+        need_to_changed_list = []
+        print("分析..................")
+        for related_path in self.get_param('source_file_info_dict'):
+            file_name = related_path.split("/")[-1]
+            if len(impossible_set.intersection(file_name))>0:
+                need_to_changed_list.append(related_path)
+        if len(need_to_changed_list)>0:
+            print("总共有%d个文件的文件名需要整改"%len(need_to_changed_list))
+            for related_path in need_to_changed_list:
+                print("\t%s"%related_path)
+            prompt = input("你想进行自动命名吗(输入yes确认)?")
+            if prompt == "yes":
+                all_allowed = False
+                for related_path in need_to_changed_list:
+                    file_name = related_path.split("/")[-1]
+                    head = related_path[0:(len(related_path) - len(file_name))]
+                    new_file_name = file_name
+                    for chars in impossible_set:
+                        new_file_name = new_file_name.replace(chars, "_")
+                    new_file_name = new_file_name.replace("_.", ".")
+
+                    print()
+                    print("\t源文件：%s"%related_path)
+                    print("\t修改为：%s"%(head+new_file_name))
+                    this_allowed = False
+                    if not all_allowed :
+                        prompt = input("\t确认修改文件名吗(输入yes确认，all表示全部)？")
+                        if prompt == "all": all_allowed = True
+                        if prompt == "yes": this_allowed = True
+                    if all_allowed or this_allowed: os.rename(self.get_var('source')+related_path, self.get_var('source')+head+new_file_name)
+        else:
+            print("太好了，没有文件的命名需要整改")        
 
     def service_open(self):
         if not self.are_vars_exist(['source', 'output']):return
