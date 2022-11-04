@@ -5,6 +5,7 @@ from syncservice import *
 from baseservice import *
 from environmentservice import *
 from bookservice import *
+from remoteservice import *
 
 class CommandHub:
     def __init__(self, context):
@@ -88,6 +89,12 @@ if __name__ == "__main__":
             'command':{
                 'category': '分析图书馆中所有类别',
                 'exportlist':'导出图书馆中的图书列表',
+            }
+        },
+        "远程对象明明":{
+            'class':"RemoteService",
+            'command':{
+                'listremote':'列出云上存储的文件名和hash',
             }
         },
     }
