@@ -221,40 +221,7 @@ class SyncService(BaseService):
 
     def service_namespec(self):
         if not self.are_vars_exist(['source']):return
-        self.__prepare_analyze_action()
-        impossible_set = set(['(', ')', '（', '）', '-', ' ', ":", "：", "——", "__", "，", ","])
-        need_to_changed_list = []
-        print("分析..................")
-        for related_path in self.get_param('source_file_info_dict'):
-            file_name = related_path.split("/")[-1]
-            if len(impossible_set.intersection(file_name))>0:
-                need_to_changed_list.append(related_path)
-        if len(need_to_changed_list)>0:
-            print("总共有%d个文件的文件名需要整改"%len(need_to_changed_list))
-            for related_path in need_to_changed_list:
-                print("\t%s"%related_path)
-            prompt = input("你想进行自动命名吗(输入yes确认)?")
-            if prompt == "yes":
-                all_allowed = False
-                for related_path in need_to_changed_list:
-                    file_name = related_path.split("/")[-1]
-                    head = related_path[0:(len(related_path) - len(file_name))]
-                    new_file_name = file_name
-                    for chars in impossible_set:
-                        new_file_name = new_file_name.replace(chars, "_")
-                    new_file_name = new_file_name.replace("_.", ".")
-
-                    print()
-                    print("\t源文件：%s"%related_path)
-                    print("\t修改为：%s"%(head+new_file_name))
-                    this_allowed = False
-                    if not all_allowed :
-                        prompt = input("\t确认修改文件名吗(输入yes确认，all表示全部)？")
-                        if prompt == "all": all_allowed = True
-                        if prompt == "yes": this_allowed = True
-                    if all_allowed or this_allowed: os.rename(self.get_var('source')+related_path, self.get_var('source')+head+new_file_name)
-        else:
-            print("太好了，没有文件的命名需要整改")        
+        Util.namespec(self.get_var('source'))
 
     def service_open(self):
         if not self.are_vars_exist(['source', 'output']):return

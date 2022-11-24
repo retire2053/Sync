@@ -89,9 +89,11 @@ if __name__ == "__main__":
             'command':{
                 'category': '分析图书馆中所有类别',
                 'exportlist':'导出图书馆中的图书列表',
+                'buildsha':'为source建立sha文件',
+                'checktempdir':'检查某个临时目录中的书本文件是否合规',
             }
         },
-        "远程对象明明":{
+        "远程对象命令":{
             'class':"RemoteService",
             'command':{
                 'listremote':'列出云上存储的文件名和hash',

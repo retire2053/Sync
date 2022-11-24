@@ -117,3 +117,59 @@ class Util():
         with open(file_path, 'rb') as fp:
             data = fp.read()
         return hashlib.sha256(data).hexdigest()
+
+    @staticmethod
+    def is_effective_filename(file_name): 
+        return True if not file_name.startswith(".") and not file_name.startswith("_") else False
+
+    @staticmethod
+    def get_all_related_path_list(dir):
+        all_related_paths = []
+        for root, dirs, files in os.walk(dir):
+            related_root = root[len(dir):]
+            effective_file_names = sorted([w for w in files if Util.is_effective_filename(w)])
+            for effective_file_name in effective_file_names:
+                all_related_paths.append(related_root+"/"+effective_file_name)
+        return all_related_paths
+
+    @staticmethod
+    def namespec(dir):
+        impossible_set = set(['(', ')', '（', '）', '-', ' ', ":", "：", "——", "__", "，", ","])
+        remove_set = set(["、", "·", "《", "<", "》", ">"])
+        need_to_changed_list = []
+        print("分析\"%s\".................."%dir)
+        for related_path in Util.get_all_related_path_list(dir):
+            file_name = related_path.split("/")[-1]
+            if len(impossible_set.intersection(file_name))>0 or len(remove_set.intersection(file_name))>0:
+                need_to_changed_list.append(related_path)
+        if len(need_to_changed_list)>0:
+            print("总共有%d个文件的文件名需要整改"%len(need_to_changed_list))
+            for related_path in need_to_changed_list:
+                print("\t%s"%related_path)
+            prompt = input("你想进行自动命名吗(输入yes确认)?")
+            if prompt == "yes":
+                all_allowed = False
+                for related_path in need_to_changed_list:
+                    file_name = related_path.split("/")[-1]
+                    head = related_path[0:(len(related_path) - len(file_name))]
+                    new_file_name = file_name
+                    for chars in impossible_set:
+                        new_file_name = new_file_name.replace(chars, "_")
+                    for chars in remove_set:
+                        new_file_name = new_file_name.replace(chars, "")
+                    new_file_name = new_file_name.replace("_.", ".")
+                    new_file_name = new_file_name.replace("__", "_")
+                    new_file_name = new_file_name.replace("【", "[")
+                    new_file_name = new_file_name.replace("】", "]")
+                   
+                    print()
+                    print("\t源文件：%s"%related_path)
+                    print("\t修改为：%s"%(head+new_file_name))
+                    this_allowed = False
+                    if not all_allowed :
+                        prompt = input("\t确认修改文件名吗(输入yes确认，all表示全部)？")
+                        if prompt == "all": all_allowed = True
+                        if prompt == "yes": this_allowed = True
+                    if all_allowed or this_allowed: os.rename(dir+related_path, dir+head+new_file_name)
+        else:
+            print("太好了，没有文件的命名需要整改")    
