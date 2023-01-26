@@ -7,7 +7,8 @@ class Variables:
     def __init__(self, var_difinition):
         self.__var_definition = var_difinition
         self.__vars = list(self.__var_definition['variables'].keys())
-        self.__var_persistence_file = os.environ['HOME'] + "/"+self.__var_definition['storage_file_name']
+        print(os.environ)
+        self.__var_persistence_file = os.path.join(os.path.expanduser("~"),self.__var_definition['storage_file_name'])
         self.__var_dict = None
         self.__configs = None
 

@@ -1,6 +1,8 @@
 import datetime
 import os
 import hashlib
+import math
+import platform
 
 class Util():
 
@@ -51,7 +53,11 @@ class Util():
     def input(var_type, var_desc):
         try:
             if var_type == 'directory' :
-                text= Util.__dir_recursive_finder(os.environ['HOME'], show_sub_file=False)
+                plat = platform.system()
+                if plat=="Windows":
+                    text = input("请输入目录位置")
+                else:
+                    text = Util.__dir_recursive_finder(os.path.expanduser("~"), show_sub_file=False)
                 value = text if text is not None and os.path.isdir(text) and os.path.exists(text) else None
             elif var_type == 'file' :
                 text= Util.__dir_recursive_finder(os.environ['HOME'], show_sub_file=True)
@@ -127,15 +133,18 @@ class Util():
         all_related_paths = []
         for root, dirs, files in os.walk(dir):
             related_root = root[len(dir):]
+            print("遍历目录：root=%s, related_root=%s"%(root, related_root))            
             effective_file_names = sorted([w for w in files if Util.is_effective_filename(w)])
-            for effective_file_name in effective_file_names:
-                all_related_paths.append(related_root+"/"+effective_file_name)
+            for effective_file_name in effective_file_names:                
+                full_related_path = os.path.join(related_root,effective_file_name)
+                print("\t追加相关路径:%s"%full_related_path)
+                all_related_paths.append(full_related_path)
         return all_related_paths
 
     @staticmethod
     def namespec(dir):
-        impossible_set = set(['(', ')', '（', '）', '-', ' ', ":", "：", "——", "__", "，", ","])
-        remove_set = set(["、", "·", "《", "<", "》", ">"])
+        impossible_set = set(['(', ')', '（', '）', '-', ' ', ':', '：',';','；', '——', '__', '，', ',','+'])
+        remove_set = set(["、", "·", "《", "<", "》", ">","…","！","!"])
         need_to_changed_list = []
         print("分析\"%s\".................."%dir)
         for related_path in Util.get_all_related_path_list(dir):
@@ -149,11 +158,13 @@ class Util():
             prompt = input("你想进行自动命名吗(输入yes确认)?")
             if prompt == "yes":
                 all_allowed = False
+                count = 1
                 for related_path in need_to_changed_list:
                     file_name = related_path.split("/")[-1]
                     head = related_path[0:(len(related_path) - len(file_name))]
                     new_file_name = file_name
                     for chars in impossible_set:
+                        if chars=="+" and "c++" in file_name and "C++" in file_name: continue
                         new_file_name = new_file_name.replace(chars, "_")
                     for chars in remove_set:
                         new_file_name = new_file_name.replace(chars, "")
@@ -163,8 +174,9 @@ class Util():
                     new_file_name = new_file_name.replace("】", "]")
                    
                     print()
-                    print("\t源文件：%s"%related_path)
-                    print("\t修改为：%s"%(head+new_file_name))
+                    print("\t[%d]源文件：%s"%(count, related_path))
+                    print("\t[%d]修改为：%s"%(count, head+new_file_name))
+                    count+=1
                     this_allowed = False
                     if not all_allowed :
                         prompt = input("\t确认修改文件名吗(输入yes确认，all表示全部)？")
@@ -173,3 +185,17 @@ class Util():
                     if all_allowed or this_allowed: os.rename(dir+related_path, dir+head+new_file_name)
         else:
             print("太好了，没有文件的命名需要整改")    
+
+    @staticmethod
+    def vector_add(v1, v2): return [v1[i]+v2[i] for i in range(len(v1))]
+
+    @staticmethod
+    def vector_add_all(vector_list):
+        return [sum(vector_list[j][i]) for j in range(len(vector_list)) for i in range(len(vector_list[0]))]
+
+    @staticmethod
+    def vector_sub(v1, v2): return [v1[i]-v2[i] for i in range(len(v1))]
+
+    @staticmethod
+    def vector_distance(v1, v2):
+        return math.sqrt(sum([(v1[i]-v2[i])*(v1[i]-v2[i]) for i in range(len(v1))]))

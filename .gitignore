@@ -6,3 +6,12 @@
 .idea/vcs.xml
 *.pyc
 .vscode/settings.json
+.vs/VSWorkspaceState.json
+.vs/Sync/v17/.wsuo
+.vs/Sync/FileContentIndex/read.lock
+.vs/Sync/FileContentIndex/ce6c2e2b-37ca-4302-b280-21fa0463cc17.vsidx
+.vs/Sync/FileContentIndex/b0e60b09-e217-469f-a36a-087d88054704.vsidx
+.vs/Sync/FileContentIndex/a1680585-1658-4faf-b12b-d780360b1e45.vsidx
+.vs/Sync/FileContentIndex/411a5173-dde3-491e-a428-e46b8efeedb1.vsidx
+.vs/slnx.sqlite
+.vs/PythonSettings.json

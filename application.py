@@ -53,6 +53,7 @@ if __name__ == "__main__":
                 'name': '个人文档数据库管理',
                 'desc' :'一个简单的程序，用来管理个人的数据，可以完成同步，查找，信息整理和挖掘',
                 'shortname' : 'plibrary',
+                'version' :'2022.12.05',
             }
     command_group = {
         "环境命令": {
@@ -89,8 +90,12 @@ if __name__ == "__main__":
             'command':{
                 'category': '分析图书馆中所有类别',
                 'exportlist':'导出图书馆中的图书列表',
-                'buildsha':'为source建立sha文件',
+                'buildindex':'为所有文件建立索引，加快检索速度',
+                'find':'在索引中进行文件搜索',
+                'dup':'发现sha文件中重复项目',
+                'filelen':'计算超长的文件',
                 'checktempdir':'检查某个临时目录中的书本文件是否合规',
+                'merge':'将某个目录内的书本拷贝到uncategory并同步',
             }
         },
         "远程对象命令":{

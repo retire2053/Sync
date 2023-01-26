@@ -31,6 +31,7 @@ class BaseService:
     def get_app_name(self):return self.__app_info['name']
     def get_app_desc(self):return self.__app_info['desc']
     def get_app_shortname(self):return self.__app_info['shortname']
+    def get_app_version(self): return self.__app_info['version']
 
     def set_param(self, key, value): 
         if self.__class__ in self.__context: 

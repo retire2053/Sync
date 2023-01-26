@@ -45,6 +45,7 @@ class EnvironmentService(BaseService):
         print(''.join(['-'] * 80))
         print(self.get_app_name())
         print(self.get_app_desc())
+        print("版本：%s"%self.get_app_version())
         print(''.join(['-'] * 80))
     
     def service_exit(self):
